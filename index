@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Pesan Undangan Pernikahan Massal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: calc(100% - 22px); 
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,123,255,0.25);
+        }
+
+        button.primary-action { /* Tombol utama form */
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+
+        button.primary-action:hover {
+            background-color: #0056b3;
+        }
+
+        #guest-list-container {
+            margin-top: 30px;
+        }
+
+        #guestList {
+            max-height: 450px; 
+            overflow-y: auto;  
+            padding: 10px;     
+            border: 1px solid #e0e0e0; 
+            border-radius: 5px;
+            min-height: 60px; 
+        }
+        
+        #guestList > .guest-item:only-child { margin-bottom: 0; }
+        #initialPlaceholder { padding: 20px 0; text-align: center; color: #888; } 
+
+
+        .guest-item {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+        }
+
+        .guest-item h3 {
+            margin-top: 0;
+            color: #343a40;
+        }
+        
+        .guest-item p {
+            margin: 8px 0;
+            word-break: break-all;
+        }
+
+        .guest-item .message-preview {
+            background-color: #f8f9fa;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            white-space: pre-wrap; 
+            margin-top:10px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .action-buttons {
+            margin-top: 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            flex-wrap: wrap; 
+        }
+
+        .send-button, .btn-copy-text, .btn-delete-guest, .btn-edit-message { 
+            color: white;
+            padding: 8px 10px; 
+            text-decoration: none;
+            border: none; 
+            border-radius: 5px;
+            font-size: 0.82em; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
+            text-align: center; 
+            flex-grow: 1;  
+            flex-basis: 0; 
+            min-width: 85px; 
+        }
+
+        .send-button { 
+            background-color: #28a745;
+        }
+        .send-button:hover {
+            background-color: #1e7e34;
+        }
+
+        .btn-copy-text { 
+            background-color: #6c757d; 
+        }
+        .btn-copy-text:hover {
+            background-color: #545b62;
+        }
+
+        .btn-delete-guest {
+            background-color: #dc3545; 
+        }
+        .btn-delete-guest:hover {
+            background-color: #c82333;
+        }
+
+        .btn-edit-message {
+            background-color: #ffc107; 
+            color: #212529; 
+        }
+        .btn-edit-message:hover {
+            background-color: #e0a800;
+        }
+
+        .overall-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .btn-delete-all {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-delete-all:hover {
+            background-color: #c82333;
+        }
+        
+        .footer-credit {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* Gaya untuk Modal Edit */
+        #editMessageModal {
+            /* display: none; DIHAPUS DARI SINI agar tidak ada duplikasi dengan yang di bawah */
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none; /* ----> INI PERBAIKAN UTAMA, pastikan modal tersembunyi awalnya <---- */
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .modal-warning {
+            font-size: 0.9em; 
+            color: #444; 
+            border-left: 3px solid #ffc107; 
+            padding-left: 10px; 
+            background-color: #fff9e6; 
+            margin-bottom:15px;
+        }
+        #editMessageTextarea {
+            width: calc(100% - 22px); 
+            padding: 10px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 1em; 
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+        .modal-actions {
+            text-align: right;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.3s ease;
+        }
+        .modal-button.primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .modal-button.primary:hover {
+            background-color: #0056b3;
+        }
+        .modal-button.secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-right: 10px;
+        }
+        .modal-button.secondary:hover {
+            background-color: #545b62;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generator Pesan Undangan Pernikahan</h1>
+
+        <div id="form-input">
+            <h2>Data Undangan</h2>
+            <div class="form-group">
+                <label for="weddingCoupleNames">Nama Kedua Mempelai (Contoh: Budi & Ayu):</label>
+                <input type="text" id="weddingCoupleNames" placeholder="Contoh: Budi & Ayu">
+            </div>
+            <div class="form-group">
+                <label for="guestNames">Nama Tamu (satu nama per baris):</label>
+                <textarea id="guestNames" placeholder="Contoh:&#10;Bapak John Doe & Keluarga&#10;Ibu Siti Aminah&#10;Mr. Smith and Family" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="digitalLink">Link Undangan Digital Utama:</label>
+                <input type="text" id="digitalLink" placeholder="Contoh: https://undanganpernikahankami.com">
+            </div>
+            <div class="form-group">
+                <label for="linkParam">Awalan Parameter Link Tamu:</label>
+                <input type="text" id="linkParam" placeholder="Contoh: ?kepada= atau &untuk=" value="?penerima=">
+                <small>Contoh: jika Link Utama `https://link.com` dan parameter `?nama=`, maka hasilnya `https://link.com?nama=[NamaTamu]`</small>
+            </div>
+            <div class="form-group">
+                <label for="guestReligion">Agama Tamu (untuk tema pesan):</label>
+                <select id="guestReligion">
+                    <option value="umum">Umum / Netral</option>
+                    <option value="islam">Islam</option>
+                    <option value="kristen">Kristen Protestan</option>
+                    <option value="katolik">Katolik</option>
+                    <option value="hindu">Hindu</option>
+                    <option value="buddha">Buddha</option>
+                    <option value="konghucu">Konghucu</option>
+                </select>
+                <small>Tema pesan ini akan diterapkan untuk semua nama tamu yang dimasukkan sekaligus dalam batch ini.</small>
+            </div>
+            <button class="primary-action" onclick="addMultipleGuests()">Tambahkan Semua Tamu & Buat Pesan</button>
+        </div>
+
+        <div id="guest-list-container">
+            <h2>Daftar Undangan Siap Kirim</h2>
+            <div id="guestList">
+                <p id="initialPlaceholder">Belum ada tamu yang ditambahkan.</p>
+            </div>
+            <div class="overall-actions">
+                <button class="btn-delete-all" onclick="confirmDeleteAllGuests()">Hapus Semua Undangan</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer-credit">
+        <p>Dibuat oleh AFSUNMEDIA</p>
+        <p id="currentYear"></p>
+    </div>
+
+    <div id="editMessageModal" style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center;">
+        <div class="modal-content">
+            <h2>Edit Pesan Undangan</h2>
+            <p class="modal-warning">
+                <strong>Perhatian:</strong> Harap berhati-hati saat mengedit. Bagian seperti nama tamu (contoh: *Nama Tamu*) dan link undangan (contoh: https://...) adalah data dinamis yang dibuat otomatis. Mengubahnya secara manual di sini dapat menyebabkan informasi salah pada pesan akhir.
+            </p>
+            <textarea id="editMessageTextarea" rows="12"></textarea>
+            <div class="modal-actions">
+                <button type="button" id="cancelEditButton" class="modal-button secondary">Batal</button>
+                <button type="button" id="saveEditButton" class="modal-button primary">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const GUEST_LIST_STORAGE_KEY = 'weddingGuestListGeneratorData_v2'; 
+        let guestListData = [];
+        let currentEditingGuestId = null; 
+
+        function saveGuestListToStorage() {
+            localStorage.setItem(GUEST_LIST_STORAGE_KEY, JSON.stringify(guestListData));
+        }
+
+        function loadGuestListFromStorage() {
+            const storedData = localStorage.getItem(GUEST_LIST_STORAGE_KEY);
+            if (storedData) {
+                guestListData = JSON.parse(storedData);
+            }
+        }
+        
+        function openEditModal(guestId) {
+            currentEditingGuestId = guestId;
+            const guest = guestListData.find(g => g.id === guestId);
+            if (guest) {
+                document.getElementById('editMessageTextarea').value = guest.fullInvitationMessage;
+                document.getElementById('editMessageModal').style.display = 'flex'; 
+            } else {
+                console.error("Tamu tidak ditemukan untuk diedit!");
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editMessageModal').style.display = 'none';
+            document.getElementById('editMessageTextarea').value = ''; 
+            currentEditingGuestId = null;
+        }
+
+        function saveEditedMessage() {
+            if (currentEditingGuestId) {
+                const editedMessage = document.getElementById('editMessageTextarea').value;
+                const guestIndex = guestListData.findIndex(g => g.id === currentEditingGuestId);
+                if (guestIndex !== -1) {
+                    guestListData[guestIndex].fullInvitationMessage = editedMessage;
+                    guestListData[guestIndex].whatsAppLink = `https://wa.me/?text=${encodeURIComponent(editedMessage)}`;
+                    
+                    saveGuestListToStorage();
+                    renderAllGuests();
+                    closeEditModal();
+                }
+            }
+        }
+
+        function renderGuestItem(guest) {
+            const guestListDiv = document.getElementById('guestList');
+
+            const guestItemDiv = document.createElement('div');
+            guestItemDiv.className = 'guest-item';
+            guestItemDiv.setAttribute('data-id', guest.id); 
+
+            const nameHeader = document.createElement('h3');
+            nameHeader.textContent = guest.name;
+            guestItemDiv.appendChild(nameHeader);
+            
+            const religionPara = document.createElement('p');
+            const religionText = guest.religionText; 
+            religionPara.innerHTML = `<strong>Agama (Tema Pesan):</strong> ${religionText}`;
+            guestItemDiv.appendChild(religionPara);
+
+            const linkPara = document.createElement('p');
+            linkPara.innerHTML = `<strong>Link Undangan Pribadi:</strong> <a href="${guest.personalizedLink}" target="_blank">${guest.personalizedLink}</a>`;
+            guestItemDiv.appendChild(linkPara);
+
+            const messagePreviewPara = document.createElement('p');
+            messagePreviewPara.innerHTML = `<strong>Preview Pesan:</strong>`;
+            guestItemDiv.appendChild(messagePreviewPara);
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-preview';
+            messageDiv.textContent = guest.fullInvitationMessage; 
+            guestItemDiv.appendChild(messageDiv);
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'action-buttons';
+
+            const sendButton = document.createElement('a');
+            sendButton.className = 'send-button';
+            sendButton.href = guest.whatsAppLink; 
+            sendButton.target = '_blank';
+            sendButton.textContent = 'Kirim WA'; 
+            actionsDiv.appendChild(sendButton); 
+
+            const copyButton = document.createElement('button');
+            copyButton.className = 'btn-copy-text'; 
+            copyButton.textContent = 'Salin Teks'; 
+            copyButton.type = 'button'; 
+            copyButton.onclick = function() {
+                navigator.clipboard.writeText(guest.fullInvitationMessage) 
+                    .then(() => {
+                        const originalText = copyButton.textContent;
+                        copyButton.textContent = 'Tersalin!';
+                        copyButton.disabled = true; 
+                        setTimeout(() => {
+                            copyButton.textContent = originalText;
+                            copyButton.disabled = false; 
+                        }, 1500); 
+                    })
+                    .catch(err => {
+                        console.error('Gagal menyalin teks: ', err);
+                        alert('Gagal menyalin teks. Coba lagi atau salin manual dari preview.');
+                    });
+            };
+            actionsDiv.appendChild(copyButton); 
+            
+            const editButton = document.createElement('button');
+            editButton.className = 'btn-edit-message';
+            editButton.textContent = 'Edit Pesan';
+            editButton.type = 'button';
+            editButton.onclick = function() {
+                openEditModal(guest.id);
+            };
+            actionsDiv.appendChild(editButton);
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn-delete-guest';
+            deleteButton.textContent = 'Hapus'; 
+            deleteButton.type = 'button';
+            deleteButton.onclick = function() {
+                confirmDeleteSingleGuest(guest.id, guest.name);
+            };
+            actionsDiv.appendChild(deleteButton);
+
+            guestItemDiv.appendChild(actionsDiv); 
+            guestListDiv.appendChild(guestItemDiv);
+        }
+
+        function renderAllGuests() {
+            const guestListDiv = document.getElementById('guestList');
+            guestListDiv.innerHTML = ''; 
+
+            if (guestListData.length === 0) {
+                guestListDiv.innerHTML = '<p id="initialPlaceholder" style="text-align:center; color:#888; padding: 20px 0;">Belum ada tamu yang ditambahkan.</p>';
+            } else {
+                guestListData.forEach(guest => {
+                    renderGuestItem(guest);
+                });
+            }
+        }
+
+
+        function getReligiousGreeting(religion, guestName, personalizedLink, coupleNames) {
+            let message = "";
+            const actualCoupleNames = coupleNames || "Kami (Nama Pasangan)";
+
+            let personalSalutation;
+            if (guestName && guestName.trim() !== "") {
+                personalSalutation = `Kepada Yth.\n*${guestName.trim()}*`;
+            } else {
+                personalSalutation = "Kepada Bapak/Ibu/Saudara/i";
+            }
+
+            const invitationCoreMessage = `Dengan segala kerendahan hati dan penuh rasa syukur, kami mengundang Anda untuk hadir serta memberikan doa restu pada acara pernikahan kami, ${actualCoupleNames}.\n\nInformasi lengkap mengenai acara (waktu, tempat, RSVP, dan lainnya) dapat diakses melalui tautan undangan digital kami:\n${personalizedLink}\n\nMerupakan suatu kehormatan dan kebahagiaan yang tak ternilai bagi kami apabila Anda berkenan hadir.\n\nAtas kehadiran dan doa restunya, kami haturkan terima kasih.`;
+            const invitationBody = `${personalSalutation}\n\n${invitationCoreMessage}`;
+
+            switch (religion) {
+                case 'islam':
+                    message = `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\n${invitationBody}\n\nHormat kami,\n${actualCoupleNames}\n\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
+                    break;
+                case 'kristen':
+                    message = `Shalom,\nSalam Sejahtera dalam Kasih Kristus,\n\n${invitationBody}\n\nDengan penuh kasih,\n${actualCoupleNames}`;
+                    break;
+                case 'katolik':
+                    message = `Salam Damai Sejahtera dalam Kasih Tuhan,\n\n${invitationBody}\n\nDengan kasih,\n${actualCoupleNames}`;
+                    break;
+                case 'hindu':
+                    message = `Om Swastyastu,\n\n${invitationBody}\n\nHormat kami,\n${actualCoupleNames}\n\nOm Shanti, Shanti, Shanti Om.`;
+                    break;
+                case 'buddha':
+                    message = `Namo Buddhaya,\nSalam Sejahtera Penuh Berkah,\n\n${invitationBody}\n\nSalam Metta,\n${actualCoupleNames}\n\nSabbe Satta Bhavantu Sukhitatta.\nSemoga Semua Makhluk Berbahagia.`;
+                    break;
+                case 'konghucu':
+                    message = `Salam Kebajikan, Wei De Dong Tian,\n\n${invitationBody}\n\nHormat kami,\n${actualCoupleNames}`;
+                    break;
+                case 'umum':
+                default:
+                    message = `Dengan Hormat,\n\n${invitationBody}\n\nSalam hangat,\n${actualCoupleNames}`;
+                    break;
+            }
+            return message;
+        }
+
+        function addMultipleGuests() {
+            const weddingCoupleNamesInput = document.getElementById('weddingCoupleNames').value.trim();
+            const coupleNamesForMessage = weddingCoupleNamesInput || "Kami (Nama Pasangan)"; 
+
+            const guestNamesInput = document.getElementById('guestNames').value.trim();
+            const digitalLink = document.getElementById('digitalLink').value.trim();
+            let linkParam = document.getElementById('linkParam').value.trim();
+            const guestReligionValue = document.getElementById('guestReligion').value;
+            const guestReligionSelectElement = document.getElementById('guestReligion');
+            const guestReligionText = guestReligionSelectElement.options[guestReligionSelectElement.selectedIndex].text;
+
+
+            if (!guestNamesInput || !digitalLink || !linkParam) {
+                alert("Harap isi semua kolom: Nama Tamu, Link Undangan Digital Utama, dan Awalan Parameter Link.");
+                return;
+            }
+            
+            if (!linkParam.startsWith('?') && !linkParam.startsWith('&')) {
+                alert("Awalan Parameter Link harus dimulai dengan '?' atau '&'. Contoh: '?penerima=' atau '&kepada='.");
+                return;
+            }
+             if (!linkParam.endsWith('=')) {
+                const lastChar = linkParam.slice(-1);
+                if (lastChar !== '?' && lastChar !== '&') {
+                    linkParam += "=";
+                } else {
+                     alert("Format Awalan Parameter Link tidak benar. Seharusnya diakhiri dengan nama parameter dan '=', contoh: '?kepada='.");
+                     return;
+                }
+            }
+
+            const guestNameArray = guestNamesInput.split('\n').filter(name => name.trim() !== '');
+
+            if (guestNameArray.length === 0) {
+                alert("Masukkan setidaknya satu nama tamu di kolom 'Nama Tamu'.");
+                return;
+            }
+            
+            guestNameArray.forEach(singleGuestName => {
+                const currentGuestName = singleGuestName.trim();
+                const encodedGuestName = encodeURIComponent(currentGuestName);
+                const personalizedLink = digitalLink + linkParam + encodedGuestName;
+
+                const fullInvitationMessage = getReligiousGreeting(guestReligionValue, currentGuestName, personalizedLink, coupleNamesForMessage);
+                const encodedWhatsAppMessage = encodeURIComponent(fullInvitationMessage);
+                const whatsAppLink = `https://wa.me/?text=${encodedWhatsAppMessage}`;
+
+                const newGuestData = {
+                    id: Date.now().toString() + Math.random().toString(36).substring(2, 7), 
+                    name: currentGuestName,
+                    religionText: guestReligionText, 
+                    personalizedLink: personalizedLink,
+                    fullInvitationMessage: fullInvitationMessage,
+                    whatsAppLink: whatsAppLink
+                };
+                guestListData.push(newGuestData);
+            });
+
+            saveGuestListToStorage(); 
+            renderAllGuests(); 
+
+            document.getElementById('guestNames').value = ''; 
+        }
+
+        function confirmDeleteSingleGuest(guestId, guestName) {
+            if (confirm(`Apakah Anda yakin ingin menghapus undangan untuk "${guestName}"?`)) {
+                deleteSingleGuest(guestId);
+            }
+        }
+        
+        function deleteSingleGuest(guestId) {
+            guestListData = guestListData.filter(guest => guest.id !== guestId);
+            saveGuestListToStorage();
+            renderAllGuests();
+        }
+
+        function confirmDeleteAllGuests() {
+            if (guestListData.length === 0) {
+                alert("Daftar undangan sudah kosong.");
+                return;
+            }
+            if (confirm("Apakah Anda yakin ingin menghapus SEMUA undangan dari daftar? Tindakan ini tidak dapat diurungkan.")) {
+                deleteAllGuests();
+            }
+        }
+
+        function deleteAllGuests() {
+            guestListData = [];
+            saveGuestListToStorage(); 
+            renderAllGuests();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGuestListFromStorage();
+            renderAllGuests();
+            document.getElementById('currentYear').textContent = `© ${new Date().getFullYear()}`;
+
+            document.getElementById('saveEditButton').onclick = saveEditedMessage;
+            document.getElementById('cancelEditButton').onclick = closeEditModal;
+            
+            const modalElement = document.getElementById('editMessageModal');
+            // Pastikan modalElement tidak null sebelum menambahkan event listener
+            if(modalElement) {
+                modalElement.addEventListener('click', function(event) {
+                    if (event.target === modalElement) { 
+                        closeEditModal();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
