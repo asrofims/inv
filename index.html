@@ -58,6 +58,28 @@
             width: 1.1em;
             height: 1.1em;
         }
+
+        /* === PERUBAHAN 1: Menambahkan Scrollbar pada Daftar Tamu === */
+        #guestList {
+            max-height: 450px; /* Atur tinggi maksimal sebelum scroll muncul */
+            overflow-y: auto;
+            padding-right: 0.5rem; /* Ruang agar scrollbar tidak menimpa konten */
+        }
+        /* Styling scrollbar agar modern (opsional) */
+        #guestList::-webkit-scrollbar {
+            width: 8px;
+        }
+        #guestList::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #guestList::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        #guestList::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
     </style>
 </head>
 
@@ -78,61 +100,29 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="row g-3">
-                            <div class="col-12">
-                                <label for="weddingCoupleNames" class="form-label">Nama Kedua Mempelai</label>
-                                <input type="text" class="form-control" id="weddingCoupleNames" placeholder="Contoh: Budi & Ayu">
-                            </div>
-                            <div class="col-12">
-                                <label for="digitalLink" class="form-label">Link Undangan Digital Utama</label>
-                                <input type="text" class="form-control" id="digitalLink" placeholder="Contoh: https://undanganbahagia.com">
-                            </div>
-                            <div class="col-12">
-                                <label for="guestNames" class="form-label">Nama Tamu (satu nama per baris)</label>
-                                <textarea class="form-control" id="guestNames" placeholder="Contoh:&#10;Bapak John Doe & Keluarga&#10;Ibu Siti Aminah&#10;Mr. Smith and Family" rows="5"></textarea>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="linkParam" class="form-label">Awalan Parameter Link Tamu</label>
-                                <input type="text" class="form-control" id="linkParam" value="?penerima=">
-                                <div class="form-text">Contoh: `?kepada=` atau `&untuk=`</div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="guestReligion" class="form-label">Tema Pesan (Agama)</label>
-                                <select id="guestReligion" class="form-select">
-                                    <option value="umum">Umum / Netral</option>
-                                    <option value="islam">Islam</option>
-                                    <option value="kristen">Kristen Protestan</option>
-                                    <option value="katolik">Katolik</option>
-                                    <option value="hindu">Hindu</option>
-                                    <option value="buddha">Buddha</option>
-                                    <option value="konghucu">Konghucu</option>
-                                </select>
-                                <div class="form-text">Tema diterapkan untuk semua tamu batch ini.</div>
-                            </div>
+                            <div class="col-12"><label for="weddingCoupleNames" class="form-label">Nama Kedua Mempelai</label><input type="text" class="form-control" id="weddingCoupleNames" placeholder="Contoh: Budi & Ayu"></div>
+                            <div class="col-12"><label for="digitalLink" class="form-label">Link Undangan Digital Utama</label><input type="text" class="form-control" id="digitalLink" placeholder="Contoh: https://undanganbahagia.com"></div>
+                            <div class="col-12"><label for="guestNames" class="form-label">Nama Tamu (satu nama per baris)</label><textarea class="form-control" id="guestNames" placeholder="Contoh:&#10;Bapak John Doe & Keluarga&#10;Ibu Siti Aminah&#10;Mr. Smith and Family" rows="5"></textarea></div>
+                            <div class="col-lg-6"><label for="linkParam" class="form-label">Awalan Parameter Link Tamu</label><input type="text" class="form-control" id="linkParam" value="?penerima="><div class="form-text">Contoh: `?kepada=` atau `&untuk=`</div></div>
+                            <div class="col-lg-6"><label for="guestReligion" class="form-label">Tema Pesan (Agama)</label><select id="guestReligion" class="form-select"><option value="umum">Umum / Netral</option><option value="islam">Islam</option><option value="kristen">Kristen Protestan</option><option value="katolik">Katolik</option><option value="hindu">Hindu</option><option value="buddha">Buddha</option><option value="konghucu">Konghucu</option></select><div class="form-text">Tema diterapkan untuk semua tamu batch ini.</div></div>
                         </div>
                         <button class="btn btn-primary w-100 mt-4 py-2 fw-bold btn-icon" onclick="addMultipleGuests()">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                            Tambahkan & Buat Pesan
+                            Tambahkan Tamu & Buat Pesan
                         </button>
                     </div>
                 </div>
 
-                <div class="card shadow-sm">
+                <div class="card shadow-sm" id="guestListCard" style="display: none;">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h2 class="h5 mb-0 fw-bold">2. Daftar Undangan Siap Kirim</h2>
-                        
                         <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDeleteAllGuests()" title="Hapus Semua" aria-label="Hapus Semua Undangan">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                         </button>
-                        </div>
+                    </div>
                     <div class="card-body">
-                        <div id="guestList" class="d-grid gap-3"></div>
-                        <div id="initialPlaceholder" class="text-center text-muted p-5">
-                            <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 4rem; opacity: 0.4; margin-bottom: 1rem;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.12-1.588H6.88a2.25 2.25 0 0 0-2.12 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
-                            </svg>
-                            <span class="mt-2 block fw-medium">Masih kosong.</span>
-                            <span class="d-block small">Silakan tambahkan nama tamu di atas untuk memulai.</span>
-                        </div>
+                        <div id="guestList" class="d-grid gap-3">
+                            </div>
                     </div>
                 </div>
 
@@ -140,18 +130,12 @@
         </div>
     </div>
 
-    <footer class="footer-credit pb-4">
-        <p>Dibuat oleh AFSUNMEDIA</p>
-        <p id="currentYear"></p>
-    </footer>
+    <footer class="footer-credit pb-4"><p>Dibuat oleh AFSUNMEDIA</p><p id="currentYear"></p></footer>
 
     <div class="modal fade" id="editMessageModal" tabindex="-1" aria-labelledby="editMessageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editMessageModalLabel">Edit Pesan Undangan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                <div class="modal-header"><h5 class="modal-title" id="editMessageModalLabel">Edit Pesan Undangan</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
                 <div class="modal-body">
                     <div class="alert alert-warning d-flex align-items-center" role="alert">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="me-2" style="width: 1.5rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
@@ -159,10 +143,7 @@
                     </div>
                     <textarea id="editMessageTextarea" class="form-control" rows="12"></textarea>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="saveEditButton" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="button" id="saveEditButton" class="btn btn-primary">Simpan Perubahan</button></div>
             </div>
         </div>
     </div>
@@ -183,20 +164,31 @@
         // --- UI & Render Functions ---
         //
 
+        /**
+         * Mengontrol tampilan daftar tamu dan placeholder.
+         */
         function renderAllGuests() {
             const guestListDiv = document.getElementById('guestList');
-            const placeholderDiv = document.getElementById('initialPlaceholder');
+            // === PERUBAHAN 2: Kontrol visibilitas seluruh kartu daftar tamu ===
+            const guestListCard = document.getElementById('guestListCard');
+
             guestListDiv.innerHTML = '';
+
             if (guestListData.length === 0) {
-                placeholderDiv.style.display = 'block';
+                guestListCard.style.display = 'none'; // Sembunyikan kartu jika tidak ada data
             } else {
-                placeholderDiv.style.display = 'none';
+                guestListCard.style.display = 'block'; // Tampilkan kartu jika ada data
                 guestListData.forEach(guest => {
                     guestListDiv.innerHTML += renderGuestItem(guest);
                 });
             }
         }
 
+        /**
+         * Membuat string HTML untuk satu item tamu.
+         * @param {object} guest - Objek data tamu.
+         * @returns {string} String HTML.
+         */
         function renderGuestItem(guest) {
             const escapedMessage = guest.fullInvitationMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const escapedGuestName = guest.name.replace(/'/g, "\\'");
@@ -235,18 +227,11 @@
         }
 
         function showErrorAlert(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: message,
-                confirmButtonColor: '#0d6efd'
-            });
+            Swal.fire({ icon: 'error', title: 'Oops...', text: message, confirmButtonColor: '#0d6efd' });
         }
 
-        //
-        // --- Core Logic Functions ---
-        //
-
+        // --- Sisanya adalah fungsi yang sama, tidak ada perubahan logika ---
+        
         function addMultipleGuests() {
             const weddingCoupleNamesInput = document.getElementById('weddingCoupleNames').value.trim();
             const guestNamesInput = document.getElementById('guestNames').value.trim();
@@ -274,7 +259,6 @@
             document.getElementById('guestNames').value = '';
             Swal.fire({ icon: 'success', title: 'Berhasil!', text: `${guestNameArray.length} tamu berhasil ditambahkan.`, timer: 1500, showConfirmButton: false });
         }
-
         function getReligiousGreeting(religion, guestName, personalizedLink, coupleNames) {
             const personalSalutation = guestName && guestName.trim() !== "" ? `Kepada Yth.\n*${guestName.trim()}*` : "Kepada Bapak/Ibu/Saudara/i";
             const invitationCoreMessage = `Dengan segala kerendahan hati dan penuh rasa syukur, kami mengundang Anda untuk hadir serta memberikan doa restu pada acara pernikahan kami, ${coupleNames}.\n\nInformasi lengkap mengenai acara (waktu, tempat, RSVP, dan lainnya) dapat diakses melalui tautan undangan digital kami:\n${personalizedLink}\n\nMerupakan suatu kehormatan dan kebahagiaan yang tak ternilai bagi kami apabila Anda berkenan hadir.\n\nAtas kehadiran dan doa restunya, kami haturkan terima kasih.`;
@@ -289,11 +273,6 @@
                 default: return `Dengan Hormat,\n\n${invitationBody}\n\nSalam hangat,\n${coupleNames}`;
             }
         }
-
-        //
-        // --- Action & Event Functions ---
-        //
-
         function copyMessage(buttonElement, guestId) {
             const guest = guestListData.find(g => g.id === guestId);
             if (!guest) return;
@@ -306,95 +285,52 @@
                 })
                 .catch(err => { console.error('Gagal menyalin teks: ', err); showErrorAlert('Gagal menyalin teks.'); });
         }
-
         function confirmDeleteSingleGuest(guestId, guestName) {
             Swal.fire({ title: 'Anda yakin?', text: `Undangan untuk "${guestName}" akan dihapus permanen.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6c757d', confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal' }).then((result) => { if (result.isConfirmed) { deleteSingleGuest(guestId); } });
         }
-
         function deleteSingleGuest(guestId) {
             guestListData = guestListData.filter(guest => guest.id !== guestId);
             saveGuestListToStorage();
             renderAllGuests();
             Swal.fire('Dihapus!', 'Undangan telah berhasil dihapus.', 'success');
         }
-
         function confirmDeleteAllGuests() {
             if (guestListData.length === 0) { Swal.fire('Informasi', 'Daftar undangan sudah kosong.', 'info'); return; }
             Swal.fire({ title: 'Hapus Semua Undangan?', text: "Tindakan ini tidak dapat diurungkan!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6c757d', confirmButtonText: 'Ya, hapus semua!', cancelButtonText: 'Batal' }).then((result) => { if (result.isConfirmed) { deleteAllGuests(); } });
         }
-
         function deleteAllGuests() {
             guestListData = [];
             saveGuestListToStorage();
             renderAllGuests();
             Swal.fire('Berhasil Dihapus!', 'Semua undangan telah dihapus dari daftar.', 'success');
         }
-
-        //
-        // --- Modal Functions ---
-        //
-
         function openEditModal(guestId) {
-            currentEditingGuestId = guestId;
-            const guest = guestListData.find(g => g.id === guestId);
-            if (guest) {
-                document.getElementById('editMessageTextarea').value = guest.fullInvitationMessage;
-                if (editModalInstance) {
-                    editModalInstance.show();
-                }
-            }
+            currentEditingGuestId = guestId; const guest = guestListData.find(g => g.id === guestId);
+            if (guest) { document.getElementById('editMessageTextarea').value = guest.fullInvitationMessage; if (editModalInstance) editModalInstance.show(); }
         }
-
         function saveEditedMessage() {
             if (currentEditingGuestId) {
-                const editedMessage = document.getElementById('editMessageTextarea').value;
-                const guestIndex = guestListData.findIndex(g => g.id === currentEditingGuestId);
-                if (guestIndex !== -1) {
-                    guestListData[guestIndex].fullInvitationMessage = editedMessage;
-                    guestListData[guestIndex].whatsAppLink = `https://wa.me/?text=${encodeURIComponent(editedMessage)}`;
-                    saveGuestListToStorage();
-                    renderAllGuests();
-                    if (editModalInstance) {
-                        editModalInstance.hide();
-                    }
-                }
+                const editedMessage = document.getElementById('editMessageTextarea').value; const guestIndex = guestListData.findIndex(g => g.id === currentEditingGuestId);
+                if (guestIndex !== -1) { guestListData[guestIndex].fullInvitationMessage = editedMessage; guestListData[guestIndex].whatsAppLink = `https://wa.me/?text=${encodeURIComponent(editedMessage)}`; saveGuestListToStorage(); renderAllGuests(); if (editModalInstance) editModalInstance.hide(); }
             }
         }
-
-        //
-        // --- Local Storage Functions ---
-        //
-
         function saveGuestListToStorage() {
             localStorage.setItem(GUEST_LIST_STORAGE_KEY, JSON.stringify(guestListData));
         }
-
         function loadGuestListFromStorage() {
             const storedData = localStorage.getItem(GUEST_LIST_STORAGE_KEY);
             if (storedData) {
                 guestListData = JSON.parse(storedData);
             }
         }
-
-        //
-        // --- Initialization ---
-        //
-
         document.addEventListener('DOMContentLoaded', () => {
             const modalEl = document.getElementById('editMessageModal');
-            if (modalEl) {
-                editModalInstance = new bootstrap.Modal(modalEl);
-            }
-
+            if (modalEl) { editModalInstance = new bootstrap.Modal(modalEl); }
             loadGuestListFromStorage();
             renderAllGuests();
-
             document.getElementById('currentYear').textContent = `© ${new Date().getFullYear()}`;
-
             const saveBtn = document.getElementById('saveEditButton');
-            if (saveBtn) {
-                saveBtn.onclick = saveEditedMessage;
-            }
+            if (saveBtn) { saveBtn.onclick = saveEditedMessage; }
         });
     </script>
 </body>
