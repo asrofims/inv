@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator Pesan Undangan Pernikahan Modern</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -17,42 +18,49 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
         }
+
         h1.display-5 {
             font-family: 'Playfair+Display', serif;
         }
+
         .card {
             border: none;
             border-radius: 0.75rem;
         }
+
         .message-preview {
             background-color: #f8f9fa;
             border: 1px dashed #dee2e6;
             padding: 10px 12px;
             border-radius: .5rem;
             font-size: 0.9em;
-            white-space: pre-wrap; 
+            white-space: pre-wrap;
             margin-top: 10px;
             max-height: 120px;
             overflow-y: auto;
         }
+
         .footer-credit {
             text-align: center;
             margin-top: 3rem;
             font-size: 0.9em;
             color: #6c757d;
         }
+
         .btn-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
         }
+
         .btn-icon svg {
             width: 1.1em;
             height: 1.1em;
         }
     </style>
 </head>
+
 <body>
 
     <div class="container my-4 my-md-5">
@@ -62,7 +70,7 @@
         </header>
 
         <div class="row justify-content-center">
-            <div class="col-xl-10">
+            <div class="col-lg-9 col-xl-8">
 
                 <div class="card shadow-sm mb-5">
                     <div class="card-header bg-white py-3">
@@ -109,13 +117,13 @@
                 </div>
 
                 <div class="card shadow-sm">
-                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h2 class="h5 mb-0 fw-bold">2. Daftar Undangan Siap Kirim</h2>
-                        <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDeleteAllGuests()">
+                        
+                        <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDeleteAllGuests()" title="Hapus Semua" aria-label="Hapus Semua Undangan">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
-                            Hapus Semua
                         </button>
-                    </div>
+                        </div>
                     <div class="card-body">
                         <div id="guestList" class="d-grid gap-3"></div>
                         <div id="initialPlaceholder" class="text-center text-muted p-5">
@@ -163,23 +171,22 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
+        //
         // --- State and Constants ---
-        const GUEST_LIST_STORAGE_KEY = 'weddingGuestListGeneratorData_v2'; 
+        //
+        const GUEST_LIST_STORAGE_KEY = 'weddingGuestListGeneratorData_v2';
         let guestListData = [];
-        let currentEditingGuestId = null; 
+        let currentEditingGuestId = null;
         let editModalInstance = null;
-        
-        // --- UI & Render Functions ---
 
-        /**
-         * Mengontrol tampilan daftar tamu dan placeholder.
-         */
+        //
+        // --- UI & Render Functions ---
+        //
+
         function renderAllGuests() {
             const guestListDiv = document.getElementById('guestList');
             const placeholderDiv = document.getElementById('initialPlaceholder');
-            
-            guestListDiv.innerHTML = ''; 
-            
+            guestListDiv.innerHTML = '';
             if (guestListData.length === 0) {
                 placeholderDiv.style.display = 'block';
             } else {
@@ -189,16 +196,10 @@
                 });
             }
         }
-        
-        /**
-         * Membuat string HTML untuk satu item tamu.
-         * @param {object} guest - Objek data tamu.
-         * @returns {string} String HTML.
-         */
+
         function renderGuestItem(guest) {
             const escapedMessage = guest.fullInvitationMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            const escapedGuestName = guest.name.replace(/'/g, "\\'"); // Menghindari error pada onclick
-
+            const escapedGuestName = guest.name.replace(/'/g, "\\'");
             return `
                 <div class="card shadow-sm" data-id="${guest.id}">
                     <div class="card-body">
@@ -211,19 +212,19 @@
                         </p>
                         <div class="message-preview">${escapedMessage}</div>
                         <div class="d-flex flex-wrap gap-2 mt-3">
-                            <a href="${guest.whatsAppLink}" target="_blank" class="btn btn-sm btn-success btn-icon flex-grow-1">
+                            <a href="${guest.whatsAppLink}" target="_blank" class="btn btn-sm btn-success btn-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
                                 Kirim
                             </a>
-                            <button class="btn btn-sm btn-outline-secondary btn-icon flex-grow-1" onclick="copyMessage(this, '${guest.id}')">
+                            <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="copyMessage(this, '${guest.id}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" /></svg>
                                 Salin
                             </button>
-                            <button class="btn btn-sm btn-outline-warning btn-icon flex-grow-1" onclick="openEditModal('${guest.id}')">
+                            <button class="btn btn-sm btn-outline-warning btn-icon" onclick="openEditModal('${guest.id}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" /></svg>
                                 Edit
                             </button>
-                            <button class="btn btn-sm btn-outline-danger btn-icon flex-grow-1" onclick="confirmDeleteSingleGuest('${guest.id}', '${escapedGuestName}')">
+                            <button class="btn btn-sm btn-outline-danger btn-icon" onclick="confirmDeleteSingleGuest('${guest.id}', '${escapedGuestName}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                                 Hapus
                             </button>
@@ -233,10 +234,6 @@
             `;
         }
 
-        /**
-         * Menampilkan notifikasi error.
-         * @param {string} message - Pesan error yang akan ditampilkan.
-         */
         function showErrorAlert(message) {
             Swal.fire({
                 icon: 'error',
@@ -245,12 +242,11 @@
                 confirmButtonColor: '#0d6efd'
             });
         }
-        
-        // --- Core Logic Functions ---
 
-        /**
-         * Menambahkan beberapa tamu sekaligus dari form.
-         */
+        //
+        // --- Core Logic Functions ---
+        //
+
         function addMultipleGuests() {
             const weddingCoupleNamesInput = document.getElementById('weddingCoupleNames').value.trim();
             const guestNamesInput = document.getElementById('guestNames').value.trim();
@@ -258,67 +254,31 @@
             let linkParam = document.getElementById('linkParam').value.trim();
             const guestReligionValue = document.getElementById('guestReligion').value;
             const guestReligionSelectElement = document.getElementById('guestReligion');
-            
-            if (!guestNamesInput || !digitalLink || !linkParam) {
-                showErrorAlert("Harap isi semua kolom: Nama Tamu, Link Undangan, dan Awalan Parameter.");
-                return;
-            }
-            if (!linkParam.startsWith('?') && !linkParam.startsWith('&')) {
-                showErrorAlert("Awalan Parameter Link harus dimulai dengan '?' atau '&'.");
-                return;
-            }
-            if (!linkParam.endsWith('=')) {
-                linkParam += "=";
-            }
-
+            if (!guestNamesInput || !digitalLink || !linkParam) { showErrorAlert("Harap isi semua kolom: Nama Tamu, Link Undangan, dan Awalan Parameter."); return; }
+            if (!linkParam.startsWith('?') && !linkParam.startsWith('&')) { showErrorAlert("Awalan Parameter Link harus dimulai dengan '?' atau '&'."); return; }
+            if (!linkParam.endsWith('=')) { linkParam += "="; }
             const guestNameArray = guestNamesInput.split('\n').filter(name => name.trim() !== '');
-            if (guestNameArray.length === 0) {
-                showErrorAlert("Masukkan setidaknya satu nama tamu.");
-                return;
-            }
-            
-            const coupleNamesForMessage = weddingCoupleNamesInput || "Kami (Nama Pasangan)"; 
+            if (guestNameArray.length === 0) { showErrorAlert("Masukkan setidaknya satu nama tamu."); return; }
+            const coupleNamesForMessage = weddingCoupleNamesInput || "Kami (Nama Pasangan)";
             const guestReligionText = guestReligionSelectElement.options[guestReligionSelectElement.selectedIndex].text;
-            
             guestNameArray.forEach(singleGuestName => {
                 const currentGuestName = singleGuestName.trim();
                 const encodedGuestName = encodeURIComponent(currentGuestName);
                 const personalizedLink = digitalLink + linkParam + encodedGuestName;
                 const fullInvitationMessage = getReligiousGreeting(guestReligionValue, currentGuestName, personalizedLink, coupleNamesForMessage);
                 const whatsAppLink = `https://wa.me/?text=${encodeURIComponent(fullInvitationMessage)}`;
-                
-                guestListData.push({
-                    id: Date.now().toString() + Math.random().toString(36).substring(2, 7), 
-                    name: currentGuestName,
-                    religionText: guestReligionText, 
-                    personalizedLink: personalizedLink,
-                    fullInvitationMessage: fullInvitationMessage,
-                    whatsAppLink: whatsAppLink
-                });
+                guestListData.push({ id: Date.now().toString() + Math.random().toString(36).substring(2, 7), name: currentGuestName, religionText: guestReligionText, personalizedLink: personalizedLink, fullInvitationMessage: fullInvitationMessage, whatsAppLink: whatsAppLink });
             });
-
             saveGuestListToStorage();
             renderAllGuests();
-            document.getElementById('guestNames').value = ''; 
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: `${guestNameArray.length} tamu berhasil ditambahkan.`,
-                timer: 1500,
-                showConfirmButton: false
-            });
+            document.getElementById('guestNames').value = '';
+            Swal.fire({ icon: 'success', title: 'Berhasil!', text: `${guestNameArray.length} tamu berhasil ditambahkan.`, timer: 1500, showConfirmButton: false });
         }
-        
-        /**
-         * Menghasilkan teks undangan berdasarkan agama.
-         * @returns {string} Teks undangan lengkap.
-         */
+
         function getReligiousGreeting(religion, guestName, personalizedLink, coupleNames) {
             const personalSalutation = guestName && guestName.trim() !== "" ? `Kepada Yth.\n*${guestName.trim()}*` : "Kepada Bapak/Ibu/Saudara/i";
             const invitationCoreMessage = `Dengan segala kerendahan hati dan penuh rasa syukur, kami mengundang Anda untuk hadir serta memberikan doa restu pada acara pernikahan kami, ${coupleNames}.\n\nInformasi lengkap mengenai acara (waktu, tempat, RSVP, dan lainnya) dapat diakses melalui tautan undangan digital kami:\n${personalizedLink}\n\nMerupakan suatu kehormatan dan kebahagiaan yang tak ternilai bagi kami apabila Anda berkenan hadir.\n\nAtas kehadiran dan doa restunya, kami haturkan terima kasih.`;
             const invitationBody = `${personalSalutation}\n\n${invitationCoreMessage}`;
-            
             switch (religion) {
                 case 'islam': return `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\n${invitationBody}\n\nHormat kami,\n${coupleNames}\n\nWassalamu'alaikum Warahmatullahi Wabarakatuh.`;
                 case 'kristen': return `Shalom,\nSalam Sejahtera dalam Kasih Kristus,\n\n${invitationBody}\n\nDengan penuh kasih,\n${coupleNames}`;
@@ -329,59 +289,28 @@
                 default: return `Dengan Hormat,\n\n${invitationBody}\n\nSalam hangat,\n${coupleNames}`;
             }
         }
-        
-        // --- Action & Event Functions ---
 
-        /**
-         * Menyalin teks pesan undangan ke clipboard.
-         */
+        //
+        // --- Action & Event Functions ---
+        //
+
         function copyMessage(buttonElement, guestId) {
             const guest = guestListData.find(g => g.id === guestId);
             if (!guest) return;
-
             navigator.clipboard.writeText(guest.fullInvitationMessage)
                 .then(() => {
                     const originalHTML = buttonElement.innerHTML;
                     buttonElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg> Tersalin!`;
-                    buttonElement.classList.remove('btn-outline-secondary');
-                    buttonElement.classList.add('btn-success');
-                    buttonElement.disabled = true;
-                    setTimeout(() => {
-                        buttonElement.innerHTML = originalHTML;
-                        buttonElement.classList.remove('btn-success');
-                        buttonElement.classList.add('btn-outline-secondary');
-                        buttonElement.disabled = false;
-                    }, 2000);
+                    buttonElement.classList.remove('btn-outline-secondary'); buttonElement.classList.add('btn-success'); buttonElement.disabled = true;
+                    setTimeout(() => { buttonElement.innerHTML = originalHTML; buttonElement.classList.remove('btn-success'); buttonElement.classList.add('btn-outline-secondary'); buttonElement.disabled = false; }, 2000);
                 })
-                .catch(err => {
-                    console.error('Gagal menyalin teks: ', err);
-                    showErrorAlert('Gagal menyalin teks.');
-                });
+                .catch(err => { console.error('Gagal menyalin teks: ', err); showErrorAlert('Gagal menyalin teks.'); });
         }
-        
-        /**
-         * Menampilkan konfirmasi sebelum menghapus satu tamu.
-         */
+
         function confirmDeleteSingleGuest(guestId, guestName) {
-            Swal.fire({
-                title: 'Anda yakin?',
-                text: `Undangan untuk "${guestName}" akan dihapus permanen.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteSingleGuest(guestId);
-                }
-            });
+            Swal.fire({ title: 'Anda yakin?', text: `Undangan untuk "${guestName}" akan dihapus permanen.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6c757d', confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal' }).then((result) => { if (result.isConfirmed) { deleteSingleGuest(guestId); } });
         }
-        
-        /**
-         * Menghapus satu tamu dari daftar.
-         */
+
         function deleteSingleGuest(guestId) {
             guestListData = guestListData.filter(guest => guest.id !== guestId);
             saveGuestListToStorage();
@@ -389,45 +318,22 @@
             Swal.fire('Dihapus!', 'Undangan telah berhasil dihapus.', 'success');
         }
 
-        /**
-         * Menampilkan konfirmasi sebelum menghapus semua tamu.
-         */
         function confirmDeleteAllGuests() {
-            if (guestListData.length === 0) {
-                Swal.fire('Informasi', 'Daftar undangan sudah kosong.', 'info');
-                return;
-            }
-            Swal.fire({
-                title: 'Hapus Semua Undangan?',
-                text: "Tindakan ini tidak dapat diurungkan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus semua!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteAllGuests();
-                }
-            });
+            if (guestListData.length === 0) { Swal.fire('Informasi', 'Daftar undangan sudah kosong.', 'info'); return; }
+            Swal.fire({ title: 'Hapus Semua Undangan?', text: "Tindakan ini tidak dapat diurungkan!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6c757d', confirmButtonText: 'Ya, hapus semua!', cancelButtonText: 'Batal' }).then((result) => { if (result.isConfirmed) { deleteAllGuests(); } });
         }
-        
-        /**
-         * Menghapus semua tamu dari daftar.
-         */
+
         function deleteAllGuests() {
             guestListData = [];
             saveGuestListToStorage();
             renderAllGuests();
             Swal.fire('Berhasil Dihapus!', 'Semua undangan telah dihapus dari daftar.', 'success');
         }
-        
-        // --- Modal Functions ---
 
-        /**
-         * Membuka modal untuk mengedit pesan.
-         */
+        //
+        // --- Modal Functions ---
+        //
+
         function openEditModal(guestId) {
             currentEditingGuestId = guestId;
             const guest = guestListData.find(g => g.id === guestId);
@@ -438,10 +344,7 @@
                 }
             }
         }
-        
-        /**
-         * Menyimpan perubahan dari modal edit.
-         */
+
         function saveEditedMessage() {
             if (currentEditingGuestId) {
                 const editedMessage = document.getElementById('editMessageTextarea').value;
@@ -457,32 +360,37 @@
                 }
             }
         }
-        
+
+        //
         // --- Local Storage Functions ---
+        //
 
         function saveGuestListToStorage() {
             localStorage.setItem(GUEST_LIST_STORAGE_KEY, JSON.stringify(guestListData));
         }
+
         function loadGuestListFromStorage() {
             const storedData = localStorage.getItem(GUEST_LIST_STORAGE_KEY);
             if (storedData) {
                 guestListData = JSON.parse(storedData);
             }
         }
-        
+
+        //
         // --- Initialization ---
+        //
 
         document.addEventListener('DOMContentLoaded', () => {
             const modalEl = document.getElementById('editMessageModal');
             if (modalEl) {
                 editModalInstance = new bootstrap.Modal(modalEl);
             }
-            
+
             loadGuestListFromStorage();
             renderAllGuests();
-            
+
             document.getElementById('currentYear').textContent = `© ${new Date().getFullYear()}`;
-            
+
             const saveBtn = document.getElementById('saveEditButton');
             if (saveBtn) {
                 saveBtn.onclick = saveEditedMessage;
@@ -490,4 +398,5 @@
         });
     </script>
 </body>
+
 </html>
